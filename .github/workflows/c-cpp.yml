@@ -18,7 +18,10 @@ jobs:
       id: build-release
       uses: Joshua-Ashton/arch-mingw-github-action@v8
       with:
-        command: x86_64-w64-mingw32-gcc EDRSilencer.c -o EDRSilencer.exe -lfwpuclnt utils.c
+        command: |
+          export VERSION_NAME="${GITHUB_REF##*/}-${GITHUB_SHA##*/}"
+          ./package-release.sh ${VERSION_NAME} build --no-package
+          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
 
     - name: Upload artifacts
       id: upload-artifacts
