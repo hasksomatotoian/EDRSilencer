@@ -1,0 +1,29 @@
+name: Compile
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  artifacts-mingw-w64:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout code
+      id: checkout-code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Arch Linux MinGW Builder
+      id: build-release
+      uses: Joshua-Ashton/arch-mingw-github-action@v8
+      with:
+        command: x86_64-w64-mingw32-gcc EDRSilencer.c -o EDRSilencer.exe -lfwpuclnt utils.c
+
+    - name: Upload artifacts
+      id: upload-artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: EDRSilencer-${{ env.VERSION_NAME }}
+        path: build/EDRSilencer-${{ env.VERSION_NAME }}
+        if-no-files-found: error
