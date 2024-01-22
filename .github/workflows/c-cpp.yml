@@ -13,5 +13,8 @@ jobs:
     - name: Install MinGW
       uses: egor-tensin/setup-mingw@v2
 
+    - name: Windows SDK Install
+      uses: ChristopheLav/windows-sdk-install@v1.0.1
+
     - name: Install MinGW
       run: x86_64-w64-mingw32-gcc EDRSilencer.c utils.c -o EDRSilencer.exe -lfwpuclnt
