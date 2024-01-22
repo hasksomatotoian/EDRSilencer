@@ -21,7 +21,7 @@ jobs:
       run: choco install mingw
 
     - name: Compile EDRSilencer
-      run: gcc EDRSilencer.c utils.c -o $env:TIMT_BINARY_PATH\$env:TIMT_BINARY_FILE -lfwpuclnt
+      run: x86_64-w64-mingw32-gcc EDRSilencer.c utils.c -o $env:TIMT_BINARY_PATH\$env:TIMT_BINARY_FILE -lfwpuclnt
       shell: powershell
 
     #--------------------------------------------------------------------------------
