@@ -7,14 +7,17 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+    - name: Setup Windows 10 SDK Action
+      uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.12
+      with:
+        # SDK 5-digit version to install (e.g 17763, 18362, 19041)
+        sdk-version: 18362
+
     - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Install MinGW
       uses: egor-tensin/setup-mingw@v2
-
-    - name: Windows SDK Install
-      uses: ChristopheLav/windows-sdk-install@v1.0.1
 
     - name: Install MinGW
       run: x86_64-w64-mingw32-gcc EDRSilencer.c utils.c -o EDRSilencer.exe -lfwpuclnt
