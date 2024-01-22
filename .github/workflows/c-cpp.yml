@@ -43,7 +43,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ steps.get_release_version.outputs.version }}
+        tag_name: v${{ github.run_number }}
         release_name: ${{ env.TIMT_PROJECT_NAME }} v${{ github.run_number }}
         draft: false
         prerelease: false
