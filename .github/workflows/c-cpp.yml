@@ -6,16 +6,55 @@ jobs:
   artifacts-mingw-w64:
     runs-on: windows-latest # ubuntu-20.04
 
+    # Define env variables containing project properties
+    # Use TIMT (The-Infinite-Monkey-Theorem) prefix for variable names
+    env:
+      TIMT_PROJECT_NAME: ${{ github.event.repository.name }}
+      TIMT_BINARY_PATH: '${{ github.workspace }}'
+      TIMT_BINARY_FILE: '${{ github.event.repository.name }}.exe'
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
     - name: Install MinGW
       run: choco install mingw
-      
-    #- name: Install MinGW
-    #  uses: egor-tensin/setup-mingw@v2
 
-    - name: Install MinGW
-      run: gcc EDRSilencer.c utils.c -o EDRSilencer.exe -lfwpuclnt
-      # run: x86_64-w64-mingw32-gcc EDRSilencer.c utils.c -o EDRSilencer.exe -lfwpuclnt
+    - name: Compile EDRSilencer
+      run: gcc EDRSilencer.c utils.c -o $env:TIMT_BINARY_PATH\$env:TIMT_BINARY_FILE -lfwpuclnt
+      shell: powershell
+
+    #--------------------------------------------------------------------------------
+    #                                     Release
+    #--------------------------------------------------------------------------------
+
+    # Create ZIP file containing project binaries
+    - name: Create Zip
+      id: create_zip
+      run: |
+        Compress-Archive -Path "$env:TIMT_BINARY_PATH\$env:TIMT_BINARY_FILE" -DestinationPath ".\$env:TIMT_PROJECT_NAME.zip"
+        echo "::set-output name=assetFilename::$env:TIMT_PROJECT_NAME.zip"
+      shell: powershell
+
+    # Create new project release
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.get_release_version.outputs.version }}
+        release_name: ${{ env.TIMT_PROJECT_NAME }} v${{ github.run_number }}
+        draft: false
+        prerelease: false
+
+    # Attach ZIP file containing project binaries to the release
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.create_zip.outputs.assetFilename }}
+        asset_name: ${{ env.TIMT_PROJECT_NAME }}.zip
+        asset_content_type: application/zip
