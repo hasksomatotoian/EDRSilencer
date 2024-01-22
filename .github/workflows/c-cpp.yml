@@ -8,25 +8,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      id: checkout-code
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-        fetch-depth: 0
+      uses: actions/checkout@v4
 
-    - name: Arch Linux MinGW Builder
-      id: build-release
-      uses: Joshua-Ashton/arch-mingw-github-action@v8
-      with:
-        command: |
-          export VERSION_NAME="${GITHUB_REF##*/}-${GITHUB_SHA##*/}"
-          ./package-release.sh ${VERSION_NAME} build --no-package
-          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_ENV
+    - name: Install MinGW
+      uses: egor-tensin/setup-mingw@v2
 
-    - name: Upload artifacts
-      id: upload-artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: EDRSilencer-${{ env.VERSION_NAME }}
-        path: build/EDRSilencer-${{ env.VERSION_NAME }}
-        if-no-files-found: error
+    - name: Install MinGW
+      run: x86_64-w64-mingw32-gcc EDRSilencer.c utils.c -o EDRSilencer.exe -lfwpuclnt
