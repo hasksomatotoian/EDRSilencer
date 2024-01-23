@@ -22,7 +22,7 @@ jobs:
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.12
       with:
         # SDK 5-digit version to install (e.g 17763, 18362, 19041)
-        sdk-version: 18362
+        sdk-version: 20348
       
     - name: Install MinGW
       run: choco install mingw
