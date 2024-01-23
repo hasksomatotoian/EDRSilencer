@@ -3,8 +3,9 @@ name: Compile
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  artifacts-mingw-w64:
-    runs-on: windows-latest
+  build-release:
+  
+    runs-on: windows-2019
 
     # Define env variables containing project properties
     # Use TIMT (The-Infinite-Monkey-Theorem) prefix for variable names
@@ -16,6 +17,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Setup Windows 10 SDK Action
+      uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.12
+      with:
+        # SDK 5-digit version to install (e.g 17763, 18362, 19041)
+        sdk-version: 18362
       
     - name: Install MinGW
       run: choco install mingw
